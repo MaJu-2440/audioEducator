@@ -1,0 +1,39 @@
+/* Estilos personalizados adicionais */
+body {
+    font-family: 'Inter', sans-serif; /* Fonte moderna */
+    transition: background-color 0.5s ease; /* Transição suave para mudança de tema (futuro) */
+}
+
+/* Estilo para a imagem ativa com foco roxo */
+.imagem.ativa {
+    transform: scale(1.1);
+    border: 4px solid #8B5CF6; /* Roxo vibrante */
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+}
+
+.btnTema {
+    transition: all 0.3s ease; /* Transições suaves para botões */
+}
+
+.btnTema:hover {
+    transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
+}
+
+.btnTema.ativo { /* Estilo para o botão de tema ativo */
+    background-color: #6D28D9 !important; /* Roxo mais escuro para botão ativo */
+    color: white !important;
+    box-shadow: 0 0 10px rgba(109, 40, 217, 0.4);
+}
+
+.imagem {
+    width: 150px; /* Tamanho base para as imagens */
+    height: 150px; /* Manter proporção quadrada */
+    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    margin: auto;
+}
+ /* Fallback para a fonte Inter caso não seja carregada */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+

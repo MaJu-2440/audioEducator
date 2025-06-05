@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>audioEducator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-br from-purple-600 to-indigo-700 min-h-screen flex flex-col items-center justify-center p-4 text-white">
+
+    <header class="mb-10 text-center">
+        <h1 class="text-5xl mt-2 font-bold tracking-tight">audioEducator</h1>
+        <p class="text-purple-200 text-lg mt-2">Explore sons divertidos e educativos!</p>
+    </header>
+
+    <!-- Seção de Botões de Tema -->
+    <div class="tema-container bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-2xl mb-10">
+        <h2 class="text-2xl font-semibold mb-4 text-center text-purple-100">Escolha um Tema:</h2>
+        <div class="flex flex-wrap justify-center gap-4">
+            <!-- Botões de Tema -->
+            <button class="btnTema bg-purple-500 hover:bg-purple-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300" id="tema1">Animais</button>
+            <button class="btnTema bg-purple-500 hover:bg-purple-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300" id="tema2">Instrumentos Musicais</button>
+            <button class="btnTema bg-purple-500 hover:bg-purple-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300" id="tema3">Transporte</button>
+        </div>
+    </div>
+
+    <!-- Galeria de Imagens -->
+    <div class="galeria grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-6 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-2xl max-w-3xl w-full">
+        <!-- Imagens serão carregadas aqui pelo JavaScript -->
+        <!-- Exemplo de imagem (substitua pelos seus dados reais) -->
+        <img class="imagem rounded-lg shadow-lg hover:shadow-purple-400/50" id="imagem1" src="https://placehold.co/150x150/A78BFA/FFFFFF?text=Tema+1" alt="Imagem de Animal 1" data-audio="sons/som_galinha.mp3">
+        <img class="imagem rounded-lg shadow-lg hover:shadow-purple-400/50" id="imagem2" src="https://placehold.co/150x150/C4B5FD/3730A3?text=Tema+2" alt="Imagem de Animal 2" data-audio="sons/som_ovelha.mp3">
+        <img class="imagem rounded-lg shadow-lg hover:shadow-purple-400/50" id="imagem3" src="https://placehold.co/150x150/8B5CF6/FFFFFF?text=Tema+3" alt="Imagem de Animal 3" data-audio="sons/som_vaca.mp3">
+        <!-- Adicione mais imagens conforme necessário para o tema padrão -->
+    </div>
+
+    <footer class="mt-12 text-center text-purple-300 text-sm">
+        <p>&copy; 2025 audioEducator MaJu Pacheco. Todos os direitos reservados.</p>
+    </footer>
+</body>
+
+<script>
+    const btnsElements = document.querySelectorAll('.btnTema');
+    const imagesElements = document.querySelectorAll('.imagem');
+    const galeria = document.querySelector('.galeria');
+    // transforma os nodelist em arrays
+    const btns = Array.from(btnsElements);
+    const images = Array.from(imagesElements);
+
+    const audios = [];
+
+    // objeto com os contextos de cada tema
+    const tema = {
+        animais: {
+            imagens: [
+                { id: 'imagem1', src: 'https://placehold.co/150x150/A78BFA/FFFFFF?text=Galinha', som: 'sons/som_galinha.mp3' },
+                { id: 'imagem2', src: 'https://placehold.co/150x150/C4B5FD/3730A3?text=Ovelha', som: 'sons/som_ovelha.mp3' },
+                { id: 'imagem3', src: 'https://placehold.co/150x150/8B5CF6/FFFFFF?text=Vaca', som: 'sons/som_vaca.mp3' }
+            ]
+        },
+        instrumentosMusicais: {
+            imagens: [
+                { id: 'imagem1', src: 'https://placehold.co/150x150/A78BFA/FFFFFF?text=Guitarra', som: 'sons/som_guitarra.mp3' },
+                { id: 'imagem2', src: 'https://placehold.co/150x150/C4B5FD/3730A3?text=Bateria', som: 'sons/som_bateria.mp3' },
+                { id: 'imagem3', src: 'https://placehold.co/150x150/8B5CF6/FFFFFF?text=Piano', som: 'sons/som_piano.mp3' }
+            ]
+        },
+        transporte: {
+            imagens: [
+                { id: 'imagem1', src: 'https://placehold.co/150x150/A78BFA/FFFFFF?text=Carro', som: 'sons/som_carro.mp3' },
+                { id: 'imagem2', src: 'https://placehold.co/150x150/C4B5FD/3730A3?text=Bicicleta', som: 'sons/som_bicicleta.mp3' },
+                { id: 'imagem3', src: 'https://placehold.co/150x150/8B5CF6/FFFFFF?text=Avião', som: 'sons/som_aviao.mp3' }
+            ]
+        }
+    };
+    const temaMap = {
+        1: 'animais',
+        2: 'instrumentosMusicais',
+        3: 'transporte'
+    }
+
+    images.forEach(img => {
+        acionarEventosImages(img); // Adiciona eventos de clique às imagens iniciais
+    });
+    acionarEventosTema();
+
+    // Adiciona evento de clique a cada botão de tema
+    function acionarEventosTema() {
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                pausarAudios(); // Pausa todos os áudios antes de carregar um novo tema
+                const temaId = btn.id.replace('tema', ''); // Extrai o número do tema
+                const temaSelecionado = tema[temaMap[temaId]]; // Acessa o objeto do tema
+
+                if (temaSelecionado) {
+                    carregarTema(temaSelecionado);
+                } else {
+                    console.error('Tema não encontrado:', temaId);
+                }
+            });
+        });
+    }
+
+    function carregarTema(tema) {
+        // Limpa a galeria
+        galeria.innerHTML = '';
+        audios.length = 0; // Limpa a array de audios
+        images.length = 0; // Limpa a array de imagens
+
+        // Carrega as imagens e audios do tema selecionado
+        tema.imagens.forEach(item => {
+            const img = document.createElement('img');
+            img.className = 'imagem rounded-lg shadow-lg hover:shadow-purple-400/50';
+            img.id = item.id;
+            img.src = item.src;
+            img.alt = `Imagem de ${item.id}`;
+            img.setAttribute('data-audio', item.som);
+            acionarEventosImages(img); // Reativa os eventos de clique para as novas imagens
+            galeria.appendChild(img);
+            images.push(img);
+            
+            // Atualiza os audios
+            atualizarAudios(item.som);
+        });
+    }
+
+    function atualizarAudios(itemAudio) {
+        // Cria o áudio correspondente
+        const audio = new Audio(itemAudio);
+        audios.push(audio);
+    }
+
+    // Adiciona evento de clique a cada imagem
+    function acionarEventosImages(img) {
+        img.addEventListener('click', () => {
+            const audioReferente = img.getAttribute('data-audio');
+            const audioAcionado = audios.find(audio => audio.src.includes(audioReferente)); // Encontra o áudio correspondente
+    
+            if (!audioAcionado) return; // Se não encontrar, sai da função
+    
+            acionarAudio(audioAcionado);
+            img.classList.add('ativa');
+        });
+    }
+
+    function acionarAudio(audioAcionado) {
+        pausarAudios();
+        audioAcionado.currentTime = 0; // Reseta o tempo do áudio
+        audioAcionado.play();
+        
+        images.forEach(image => {
+            image.classList.remove('ativa');
+        });
+    }
+
+    function pausarAudios() {
+        audios.forEach(audio => {
+            if (!audio.paused) {
+                audio.pause(); // Pausa o áudio atual
+            }
+        });
+    }
+
+</script>
+</html>
